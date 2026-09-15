@@ -8,6 +8,7 @@ using namespace c2d;
 using namespace pemu;
 
 PEMUUiMain *pemu_ui;
+bool g_pnes_bubble_mode = false;
 
 int main(int argc, char **argv) {
     // command line game info
@@ -15,6 +16,32 @@ int main(int argc, char **argv) {
 
     // custom io
     const auto io = new PEMUIo();
+
+#ifdef __VITA__
+    // vita game bubble: if a rom file is bundled inside our own read-only
+    // app package (created by the "create vita bubble" feature), launch it
+    // directly instead of showing the rom list, exactly as if it had been
+    // passed on the command line.
+    if (argc <= 1) {
+        static std::string bubbleRomPath;
+        const std::string bubbleDir = io->getRomFsPath() + "bubble/";
+        if (io->exist(bubbleDir)) {
+            auto bubbleFiles = io->getDirList(bubbleDir, false, false);
+            for (const auto &f: bubbleFiles) {
+                if (f.isFile()) {
+                    bubbleRomPath = bubbleDir + f.name;
+                    static char *bubbleArgv[2];
+                    bubbleArgv[0] = argv[0];
+                    bubbleArgv[1] = (char *) bubbleRomPath.c_str();
+                    argv = bubbleArgv;
+                    argc = 2;
+                    g_pnes_bubble_mode = true;
+                    break;
+                }
+            }
+        }
+    }
+#endif
 
     // create main ui/renderer
     // NOTE: size must stay {0, 0} on non-switch platforms (PS4, PS5, Vita, Linux, Windows...).

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "pemu.h"
 #include "ss_api.h"
+#include "bubble_maker.h"
 
 using namespace c2d;
 using namespace c2d::config;
@@ -278,6 +279,27 @@ bool UIRomList::onInput(c2d::Input::Player *players) {
                 if (pMain->getConfig()->get(PEMUConfig::OptId::UI_FILTER_FAVORITES)->getInteger()) {
                     // update list if we are in favorites
                     updateRomList();
+                }
+            }
+        }
+    } else if (buttons & Input::Button::Y) {
+        // create a standalone vita bubble for this game
+        Game game = getSelection();
+        if (game.available) {
+            int res = pMain->getUiMessageBox()->show(
+                    "VITA BUBBLE", "Create a Vita bubble for this game ?", "OK", "CANCEL");
+            if (res == MessageBox::LEFT) {
+                pMain->getUiProgressBox()->setTitle("VITA BUBBLE");
+                pMain->getUiProgressBox()->setMessage("Creating bubble...");
+                pMain->getUiProgressBox()->setVisibility(Visibility::Visible);
+                std::string err = BubbleMaker::createBubble(pMain, game);
+                pMain->getUiProgressBox()->setVisibility(Visibility::Hidden);
+                if (err.empty()) {
+                    pMain->getUiMessageBox()->show(
+                            "VITA BUBBLE", "Bubble created ! check your LiveArea.", "OK", "");
+                } else {
+                    pMain->getUiMessageBox()->show(
+                            "VITA BUBBLE", ("Failed: " + err).c_str(), "OK", "");
                 }
             }
         }

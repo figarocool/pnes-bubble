@@ -47,10 +47,14 @@ void UiEmu::addVideo(uint8_t **pixels, int *pitch,
     addVideo(v);
 }
 
+extern bool g_pnes_bubble_mode;
+
 int UiEmu::load(const Game &game) {
     printf("UiEmu::load: name: %s, path: %s\n",
            game.path.c_str(), game.romsPath.c_str());
-    pMain->getUiStatusBox()->show("TIPS: PRESS MENU1 + MENU2 BUTTONS FOR IN GAME MENU...");
+    if (!g_pnes_bubble_mode) {
+        pMain->getUiStatusBox()->show("TIPS: PRESS MENU1 + MENU2 BUTTONS FOR IN GAME MENU...");
+    }
     currentGame = game;
 
     // set fps text on top

@@ -121,6 +121,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${PNES_INC} ${NESTOPIA_INC})
 target_compile_options(${PROJECT_NAME} PRIVATE ${NESTOPIA_CFLAGS})
 target_link_libraries(${PROJECT_NAME} cross2dui ${NESTOPIA_LDFLAGS})
 
+if (PLATFORM_VITA)
+    # elevated authid (SceShell) needed to call ScePromoterUtility from the
+    # "create vita bubble" feature - only pnes needs this, not the other cores
+    set(VITA_EBOOT_AUTHID_FLAG "-a" "0x2808000000000000")
+endif ()
+
 # include libcross2d targets
 include(${CMAKE_SOURCE_DIR}/external/libcross2d/cmake/targets.cmake)
 

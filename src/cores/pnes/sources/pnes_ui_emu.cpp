@@ -32,13 +32,19 @@ PNESUiEmu::PNESUiEmu(UiMain *ui) : UiEmu(ui) {
     uiEmu = this;
 }
 
+extern bool g_pnes_bubble_mode;
+
 int PNESUiEmu::load(const ss_api::Game &game) {
-    getUi()->getUiProgressBox()->setTitle(game.name);
-    getUi()->getUiProgressBox()->setMessage("Please wait...");
-    getUi()->getUiProgressBox()->setProgress(0);
-    getUi()->getUiProgressBox()->setVisibility(Visibility::Visible);
-    getUi()->getUiProgressBox()->setLayer(1000);
-    getUi()->flip();
+    // a game bubble launches straight into its one bundled rom - skip the
+    // "please wait" progress popup and its cosmetic delay, like a real bubble
+    if (!g_pnes_bubble_mode) {
+        getUi()->getUiProgressBox()->setTitle(game.name);
+        getUi()->getUiProgressBox()->setMessage("Please wait...");
+        getUi()->getUiProgressBox()->setProgress(0);
+        getUi()->getUiProgressBox()->setVisibility(Visibility::Visible);
+        getUi()->getUiProgressBox()->setLayer(1000);
+        getUi()->flip();
+    }
 
     // default config
     nestopia_config_init();
@@ -53,9 +59,11 @@ int PNESUiEmu::load(const ss_api::Game &game) {
 
     targetFps = nst_pal() ? 50 : 60;
 
-    getUi()->getUiProgressBox()->setProgress(1);
-    getUi()->flip();
-    getUi()->delay(500);
+    if (!g_pnes_bubble_mode) {
+        getUi()->getUiProgressBox()->setProgress(1);
+        getUi()->flip();
+        getUi()->delay(500);
+    }
     getUi()->getUiProgressBox()->setVisibility(Visibility::Hidden);
 
     return UiEmu::load(game);
