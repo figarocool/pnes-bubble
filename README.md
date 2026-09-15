@@ -11,6 +11,16 @@
 [![vita-release](https://github.com/Cpasjuste/pemu/actions/workflows/vita-release.yml/badge.svg)](https://github.com/Cpasjuste/pemu/actions/workflows/vita-release.yml)
 [![vita-dev](https://github.com/Cpasjuste/pemu/actions/workflows/vita-dev.yml/badge.svg)](https://github.com/Cpasjuste/pemu/actions/workflows/vita-dev.yml)
 
+## Fork note (pnes-bubble)
+
+This fork is based on [Cpasjuste/pemu](https://github.com/Cpasjuste/pemu), which is a
+multi-emulator project (FBNeo, Genesis Plus GX, NES/Nestopia, SNES, GBA - PS Vita,
+Switch, PS4, Linux, Windows...). **This fork only modifies and builds the NES
+core (`pnes`)** to add a "create Vita bubble" feature (see below); the other
+cores (pfbneo, pgen, psnes, pgba) are untouched and untested here. The
+`pnes.vpk` attached to the [releases](https://github.com/figarocool/pnes-bubble/releases)
+is the NES emulator only, not the full pEMU suite.
+
 ## pEMU: Portable Emulator
 
 **<ins>Building</ins>**
